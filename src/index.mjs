@@ -24,7 +24,9 @@ const doIt = async () => {
   const collections = await c.listCollections();
   const populatedCollections = await syncAll(collections.map(collection => () => c.getCollection(collection)));
 
-  console.log(populatedCollections);
+  populatedCollections.forEach((c) => {
+    console.log(c.elements);
+  });
 };
 
 doIt();

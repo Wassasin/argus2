@@ -27,9 +27,15 @@ export default class Coop {
     await this.browser.page.waitForSelector('.productItem');
 
     const elements = await this.browser.page.evaluate(
-      () => [...document.querySelectorAll('.productItem')]
+      () => [...document.querySelectorAll('.productLine')]
         .filter(x => x.querySelector('.productTitle'))
-        .map(x => ({ title: x.querySelector('.productTitle').innerText, subtitle: x.querySelector('.productSubTitle').innerText }))
+        .map(x => ({
+          sku: JSON.parse(x.dataset.product).id,
+          title: x.querySelector('.productTitle').innerText,
+          subtitle: x.querySelector('.productSubTitle').innerText,
+          amount: Number.parseInt(x.querySelector('input[data-wishlistentry-quantity]').value, 10),
+          price: Number.parseFloat(x.querySelector('ins.price').innerText.replace(',', '.')),
+        }))
     );
 
     return {...collection, elements};
