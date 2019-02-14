@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
+
 dotenv.config();
 
 import Browser from './browser';
@@ -24,8 +26,18 @@ const doIt = async () => {
   const collections = await c.listCollections();
   const populatedCollections = await syncAll(collections.map(collection => () => c.getCollection(collection)));
 
-  populatedCollections.forEach((c) => {
-    console.log(c.elements);
+  b.close();
+
+  fs.writeFileSync('baskets.json', JSON.stringify(populatedCollections));
+
+  const summary = populatedCollections.map(c => ({
+    name: c.name,
+    size: c.elements.length,
+    totalPrice: c.elements.reduce((acc, e) => acc + (e.amount * e.price), 0),
+  }));
+
+  summary.forEach((s) => {
+    console.log(`${s.name},${s.size},${s.totalPrice}`);
   });
 };
 
